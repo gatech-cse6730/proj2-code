@@ -1,2 +1,2 @@
 class Power(object):
-  pass
+    pass
