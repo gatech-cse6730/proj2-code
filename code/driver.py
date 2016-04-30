@@ -19,9 +19,6 @@ class Driver(object):
         # Enable interactive mode.
         plt.ion()
 
-        # Show plot.
-        plt.show()
-
     def update_visualization(self):
         # Plot the data.
         plt.scatter(self.x, self.y)
