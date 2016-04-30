@@ -31,11 +31,7 @@ class Disaster(object):
             self.population.remove_person(random.randint(0,max_index))
             max_index -= 1
 
-        # 
-        # TODO Allen: add method so this works.
-        #
-
         # this regeneration of the death dict makes it slow (90 sec for 200k deaths for population of 1mil)
-        # self.population.generate_death_dict()
+        self.population.generate_death_dict()
 
         return True
