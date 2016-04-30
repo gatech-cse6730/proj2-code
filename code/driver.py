@@ -119,4 +119,4 @@ class Driver(object):
 
 if __name__ == '__main__':
     driver = Driver(vis=True)
-    driver.drive(10,0,50)
+    driver.drive(max_iterations=500,random_seed=0,initial_pop=50)
