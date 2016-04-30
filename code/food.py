@@ -91,7 +91,7 @@ class Food(object):
         soil_f = self.previous_f + delta_t * soil_f_dot
 
         # compute food output, set remaining food to what was produced
-        self.produced_food = alpha * (1.0 - np.exp(-self.beta * soil_f))
+        self.produced_food = self.alpha * (1.0 - np.exp(-self.beta * soil_f))
         self.remaining_food = self.produced_food
 
         # save soil_f for next iteration
