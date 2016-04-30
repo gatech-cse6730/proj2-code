@@ -7,6 +7,8 @@ from population import Population
 from visualizer import Visualizer
 from disaster import Disaster
 from person import Person
+from food import Food
+from facility import Facility
 
 class Driver(object):
     def __init__(self, vis=False):
@@ -21,9 +23,10 @@ class Driver(object):
         death_dict = defaultdict(list)
         people_born = {k: 0 for k in range(9)}
         people_born[0] = 50 # initial population
-        max_sim_time = 500 # max number of iterations
+        max_sim_time = 10 # max number of iterations
         population = Population()
         disaster = Disaster(population)
+        facility = Facility(10000, 60) #allen/matt: update #'s to be w/e you want, I did this for testing
 
         for indx, cur_sim_time in enumerate(range(max_sim_time)):
             print 'current sim time:', cur_sim_time
@@ -49,6 +52,14 @@ class Driver(object):
             start = time.time()
             total_kcal = population.kcal_requirements(cur_sim_time)
             print 'completed total kcal in:', time.time() - start
+            
+            # Food initialization/production
+            if cur_sim_time == 0:
+                foodie = Food(facility, total_kcal)
+            else:
+                foodie.calculate_food_production()
+            foodie.remaining_food = foodie.produced_food - total_kcal #NOTE: INTEGRATE BETTER FOOD CONSUMPTION MODEL HERE
+            print 'produced food = ', foodie.produced_food, '; remaining food = ', foodie.remaining_food
 
             # Calculating how many newborns to be created in 9 months time
             num_people = population.num_people()
