@@ -10,7 +10,7 @@ class Population(object):
 
     """
 
-    def __init__(self, people = [], k = 1.0):
+    def __init__(self, people=[], k=1.0):
         """
         Creates a new Population.
 

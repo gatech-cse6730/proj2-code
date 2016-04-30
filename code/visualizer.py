@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 class Visualizer(object):
-    def __init__(self, log = False):
+    def __init__(self, log=False, series=()):
         self.opts = {}
         self.opts['log'] = log
 
@@ -13,14 +13,8 @@ class Visualizer(object):
         fig = plt.figure()
         self.ax = fig.add_subplot(111)
 
-    def setup(self, series):
-        self.x = []
-        self.y = { s: { 'color': np.random.rand(3,1), 'data': [] } for s in series }
-
-        self._plot()
-
-        # Create the legend.
-        plt.legend(loc='upper left');
+        self.series = series
+        self._setup()
 
     def update(self):
         # Plot the data.
@@ -32,11 +26,20 @@ class Visualizer(object):
         # A short pause so Mac OS X 10.11.3 doesn't break.
         plt.pause(0.0001)
 
-    def add_data(self, x, data = {}):
+    def add_data(self, x, data={}):
         self.x.append(x)
 
         for label, datum in data.iteritems():
             self.y[label]['data'].append(datum)
+
+    def _setup(self):
+        self.x = []
+        self.y = { s: { 'color': np.random.rand(3,1), 'data': [] } for s in self.series }
+
+        self._plot()
+
+        # Create the legend.
+        plt.legend(loc='upper left');
 
     def _plot(self):
         for label, data_dict in self.y.iteritems():

@@ -7,34 +7,73 @@ from population import Population
 from visualizer import Visualizer
 from disaster import Disaster
 from person import Person
+from food import Food
+from facility import Facility
 
 class Driver(object):
-    def __init__(self):
-        self.vis = Visualizer(log=True)
-        self.set_series()
+    def __init__(self, vis=False):
+        """
+        Creates a new Driver.
 
-    def set_series(self):
-        series = ('Population', 'Mcals')
-        self.vis.setup(series)
+        Args:
+            vis: Boolean. Whether or not to show visualization of the simulation
+                 runs using matplotlib.
 
-    def drive(self):
+        Returns:
+            A new Driver instance.
 
-        # initial inputs
-        random.seed(0) #seed the random number generator
-        death_dict = defaultdict(list)
-        people_born = {k: 0 for k in range(9)}
-        people_born[0] = 50 # initial population
-        max_sim_time = 500 # max number of iterations
+        """
+
+        # If visualization is selected, show it.
+        if vis:
+            series = ('Population', 'Mcals')
+            self.vis = Visualizer(log=True, series=series)
+
+    def drive(self,
+              max_iterations=500,
+              random_seed=0,
+              initial_pop=50):
+        """
+        Args:
+            max_iterations: Integer. The maximum number of iterations the
+                            simulation should run.
+            random_seed: Integer. Seed for the random number generator.
+            initial_pop: Integer. The initial population for the population.
+
+        Returns:
+            None.
+
+        """
+
+        # Seed the random number generator.
+        random.seed(random_seed)
+
+        # Create a dictionary that will hold the number of newborns that will
+        # be added to the simulation.
+        people_born = { k: 0 for k in range(9) }
+        people_born[0] = initial_pop
+
+        # Set the maximum number of iterations that the simulation will run.
+        max_sim_time = max_iterations
+
+        # Initialize a population.
         population = Population()
-        disaster = Disaster(population)
 
-        for indx, cur_sim_time in enumerate(range(max_sim_time)):
+        # Create a disaster object for the population - this models uncertainty
+        # events that may adversely affect the population.
+        disaster = Disaster(population)
+        
+        # Create a facility for population
+        #TODO: Update #'s better, I did this for testing
+        facility = Facility(10000, 60)
+
+        for cur_sim_time in range(max_sim_time):
             print 'current sim time:', cur_sim_time
             start = time.time()
 
             if random.random() <= 0.01:
                 ratio = random.random()/4.0
-                disaster.createDisaster(ratio)
+                disaster.create_disaster(ratio)
                 print 'DISASTER killed', ratio, 'in:', time.time() - start
                 start = time.time()
 
@@ -52,6 +91,18 @@ class Driver(object):
             start = time.time()
             total_kcal = population.kcal_requirements(cur_sim_time)
             print 'completed total kcal in:', time.time() - start
+            
+            # Food initialization/production
+            if cur_sim_time == 0:
+                food = Food(facility, total_kcal)
+            else:
+                food.calculate_food_production()
+            
+            # Food consumption
+            #TODO: INTEGRATE BETTER FOOD CONSUMPTION MODEL HERE
+            food.remaining_food = food.produced_food - total_kcal
+            print 'produced food = ', food.produced_food, '; remaining food = ', food.remaining_food
+
 
             # Calculating how many newborns to be created in 9 months time
             num_people = population.num_people()
@@ -60,9 +111,11 @@ class Driver(object):
 
             print('-'*100)
 
-            if indx % 10 == 0:
-                self.vis.add_data(indx, { 'Population': num_people, 'Mcals': total_kcal / 1000.0 })
+            if cur_sim_time % 10 == 0:
+                self.vis.add_data(cur_sim_time, { 'Population': num_people, 'Mcals': total_kcal / 1000.0 })
                 self.vis.update()
 
-driver = Driver()
-driver.drive()
+        return None
+
+driver = Driver(vis=True)
+driver.drive(10,0,50)
