@@ -10,22 +10,58 @@ from person import Person
 
 class Driver(object):
     def __init__(self, vis=False):
+        """
+        Creates a new Driver.
+
+        Args:
+            vis: Boolean. Whether or not to show visualization of the simulation
+                 runs using matplotlib.
+
+        Returns:
+            A new Driver instance.
+
+        """
+
+        # If visualization is selected, show it.
         if vis:
             series = ('Population', 'Mcals')
             self.vis = Visualizer(log=True, series=series)
 
-    def drive(self):
+    def drive(self,
+              max_iterations=500,
+              random_seed=0,
+              initial_pop=50):
+        """
+        Args:
+            max_iterations: Integer. The maximum number of iterations the
+                            simulation should run.
+            random_seed: Integer. Seed for the random number generator.
+            initial_pop: Integer. The initial population for the population.
 
-        # initial inputs
-        random.seed(0) #seed the random number generator
-        death_dict = defaultdict(list)
-        people_born = {k: 0 for k in range(9)}
-        people_born[0] = 50 # initial population
-        max_sim_time = 500 # max number of iterations
+        Returns:
+            None.
+
+        """
+
+        # Seed the random number generator.
+        random.seed(random_seed)
+
+        # Create a dictionary that will hold the number of newborns that will
+        # be added to the simulation.
+        people_born = { k: 0 for k in range(9) }
+        people_born[0] = initial_pop
+
+        # Set the maximum number of iterations that the simulation will run.
+        max_sim_time = max_iterations
+
+        # Initialize a population.
         population = Population()
+
+        # Create a disaster object for the population - this models uncertainty
+        # events that may adversely affect the population.
         disaster = Disaster(population)
 
-        for indx, cur_sim_time in enumerate(range(max_sim_time)):
+        for cur_sim_time in range(max_sim_time):
             print 'current sim time:', cur_sim_time
             start = time.time()
 
@@ -57,9 +93,11 @@ class Driver(object):
 
             print('-'*100)
 
-            if indx % 10 == 0:
-                self.vis.add_data(indx, { 'Population': num_people, 'Mcals': total_kcal / 1000.0 })
+            if cur_sim_time % 10 == 0:
+                self.vis.add_data(cur_sim_time, { 'Population': num_people, 'Mcals': total_kcal / 1000.0 })
                 self.vis.update()
+
+        return None
 
 driver = Driver(vis=True)
 driver.drive()
