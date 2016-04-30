@@ -7,6 +7,8 @@ from population import Population
 from visualizer import Visualizer
 from disaster import Disaster
 from person import Person
+from food import Food
+from facility import Facility
 
 class Driver(object):
     def __init__(self, vis=False):
@@ -60,6 +62,10 @@ class Driver(object):
         # Create a disaster object for the population - this models uncertainty
         # events that may adversely affect the population.
         disaster = Disaster(population)
+        
+        # Create a facility for population
+        #TODO: Update #'s better, I did this for testing
+        facility = Facility(10000, 60)
 
         for cur_sim_time in range(max_sim_time):
             print 'current sim time:', cur_sim_time
@@ -85,6 +91,18 @@ class Driver(object):
             start = time.time()
             total_kcal = population.kcal_requirements(cur_sim_time)
             print 'completed total kcal in:', time.time() - start
+            
+            # Food initialization/production
+            if cur_sim_time == 0:
+                food = Food(facility, total_kcal)
+            else:
+                food.calculate_food_production()
+            
+            # Food consumption
+            #TODO: INTEGRATE BETTER FOOD CONSUMPTION MODEL HERE
+            food.remaining_food = food.produced_food - total_kcal
+            print 'produced food = ', food.produced_food, '; remaining food = ', food.remaining_food
+
 
             # Calculating how many newborns to be created in 9 months time
             num_people = population.num_people()
@@ -100,4 +118,4 @@ class Driver(object):
         return None
 
 driver = Driver(vis=True)
-driver.drive()
+driver.drive(10,0,50)
