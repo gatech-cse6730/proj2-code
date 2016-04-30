@@ -1,32 +1,24 @@
 from collections import defaultdict
 import random
 import time
-import matplotlib.pyplot as plt
 import numpy as np
 
 from population import Population
+from visualizer import Visualizer
 from disaster import Disaster
 from person import Person
 
 class Driver(object):
     def __init__(self):
-        self.init_visualization()
+        self.vis = Visualizer()
+        self.set_series()
 
-    def init_visualization(self):
-        # Initialize containers for our data.
-        self.x, self.y = [], []
-
-        # Enable interactive mode.
-        plt.ion()
-
-    def update_visualization(self):
-        # Plot the data.
-        plt.scatter(self.x, self.y)
-
-        # A short pause so Mac OS X 10.11.3 doesn't break.
-        plt.pause(0.0001)
+    def set_series(self):
+        series = ('Population', 'Kcals')
+        self.vis.setup(series)
 
     def drive(self):
+
         # initial inputs
         random.seed(0) #seed the random number generator
         death_dict = defaultdict(list)
@@ -37,7 +29,7 @@ class Driver(object):
         disaster = Disaster(population)
 
         for indx, cur_sim_time in enumerate(range(max_sim_time)):
-            self.x.append(indx)
+            self.vis.advance_x(indx)
 
             print 'current sim time:', cur_sim_time
             start = time.time()
@@ -66,10 +58,12 @@ class Driver(object):
             # Calculating how many newborns to be created in 9 months time
             num_people = population.num_people()
             people_born[cur_sim_time % 9] = random.randint(int(num_people*0.01), int(num_people*0.05))
-            print 'total people:', num_people, 'and total kcal:', total_kcal, '\n'
+            print 'total people:', num_people, 'and total kcal:', total_kcal
 
-            self.y.append(num_people)
-            self.update_visualization()
+            print('-'*100)
+
+            self.vis.add_data({ 'Population': num_people, 'Kcals': total_kcal })
+            self.vis.update()
 
 driver = Driver()
 driver.drive()
