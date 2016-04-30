@@ -13,14 +13,17 @@ class Driver(object):
         self.init_visualization()
 
     def init_visualization(self):
+        # Initialize containers for our data.
         self.x, self.y = [], []
 
+        # Enable interactive mode.
         plt.ion()
 
         # Show plot.
         plt.show()
 
     def update_visualization(self):
+        # Plot the data.
         plt.scatter(self.x, self.y)
 
         # A short pause so Mac OS X 10.11.3 doesn't break.
