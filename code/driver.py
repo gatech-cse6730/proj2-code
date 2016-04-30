@@ -99,5 +99,6 @@ class Driver(object):
 
         return None
 
-driver = Driver(vis=True)
-driver.drive()
+if __name__ == '__main__':
+    driver = Driver(vis=True)
+    driver.drive()
