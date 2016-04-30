@@ -31,8 +31,19 @@ class Population(object):
         self.death_dict = defaultdict(list)
 
         if len(self.people) > 0:
-            for i in range(len(self.people)):
-                self.death_dict[self.people[i].death_age].append(i)
+            self.generate_death_dict()
+
+    def generate_death_dict(self):
+        """
+        Generates a new dictionary of death ages based on current
+        list of People in the Population.
+        """
+
+        self.death_dict = defaultdict(list)
+        for i in range(self.num_people()):
+            self.death_dict[self.people[i].death_age].append(i)
+
+        return True
 
     def init_death_age_dist(self, filename='data/death_age_dist.txt'):
         """
