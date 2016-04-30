@@ -31,7 +31,7 @@ class Driver(object):
 
             if random.random() <= 0.01:
                 ratio = random.random()/4.0
-                disaster.createDisaster(ratio)
+                disaster.create_disaster(ratio)
                 print 'DISASTER killed', ratio, 'in:', time.time() - start
                 start = time.time()
 

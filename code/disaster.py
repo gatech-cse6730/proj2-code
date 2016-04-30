@@ -20,7 +20,7 @@ class Disaster(object):
 
         self.population = population
 
-    def createDisaster(self, ratio):
+    def create_disaster(self, ratio):
         """
         Create a disaster that destroys the given ratio of the population
         and chooses people randomly to kill within the population.
