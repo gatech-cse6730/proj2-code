@@ -10,11 +10,11 @@ from person import Person
 
 class Driver(object):
     def __init__(self):
-        self.vis = Visualizer()
+        self.vis = Visualizer(log=True)
         self.set_series()
 
     def set_series(self):
-        series = ('Population', 'Kcals')
+        series = ('Population', 'Mcals')
         self.vis.setup(series)
 
     def drive(self):
@@ -29,8 +29,6 @@ class Driver(object):
         disaster = Disaster(population)
 
         for indx, cur_sim_time in enumerate(range(max_sim_time)):
-            self.vis.advance_x(indx)
-
             print 'current sim time:', cur_sim_time
             start = time.time()
 
@@ -62,8 +60,9 @@ class Driver(object):
 
             print('-'*100)
 
-            self.vis.add_data({ 'Population': num_people, 'Kcals': total_kcal })
-            self.vis.update()
+            if indx % 10 == 0:
+                self.vis.add_data(indx, { 'Population': num_people, 'Mcals': total_kcal / 1000.0 })
+                self.vis.update()
 
 driver = Driver()
 driver.drive()
