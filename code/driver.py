@@ -9,13 +9,10 @@ from disaster import Disaster
 from person import Person
 
 class Driver(object):
-    def __init__(self):
-        self.vis = Visualizer(log=True)
-        self.set_series()
-
-    def set_series(self):
-        series = ('Population', 'Mcals')
-        self.vis.setup(series)
+    def __init__(self, vis=False):
+        if vis:
+            series = ('Population', 'Mcals')
+            self.vis = Visualizer(log=True, series=series)
 
     def drive(self):
 
@@ -64,5 +61,5 @@ class Driver(object):
                 self.vis.add_data(indx, { 'Population': num_people, 'Mcals': total_kcal / 1000.0 })
                 self.vis.update()
 
-driver = Driver()
+driver = Driver(vis=True)
 driver.drive()
