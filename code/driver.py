@@ -41,7 +41,8 @@ class Driver(object):
     def drive(self,
               max_iterations=500,
               random_seed=0,
-              initial_pop=50):
+              initial_pop=50,
+              food_storage=False):
         """
         Args:
             max_iterations: Integer. The maximum number of iterations the
@@ -95,7 +96,7 @@ class Driver(object):
         facility = Facility(30000.0/30.0*(initial_pop+30), initial_pop+30)
 
         # Food initialization
-        food = Food(facility, total_kcal)
+        food = Food(facility, total_kcal, food_storage=food_storage)
 
         # Create a disaster object for the population - this models uncertainty
         # events that may adversely affect the population & food

@@ -9,7 +9,7 @@ class Food(object):
 
     """
 
-    def __init__(self, facility, e_dot_pop):
+    def __init__(self, facility, e_dot_pop, food_storage=False):
         """
         Creates a new Food instance.
 
@@ -35,6 +35,7 @@ class Food(object):
         self.remaining_food            = 0.0
         self.previous_f                = 0.0
         self.previous_sim_time         = 0.0
+        self.food_storage              = food_storage
 
         # Initialize the amount food production.
         self.initialize_food_production(e_dot_pop)
@@ -88,7 +89,10 @@ class Food(object):
         soil_f = self.previous_f + delta_t * soil_f_dot
 
         # compute food output, add remaining food from last iteration
-        self.produced_food = self.alpha * (1.0 - np.exp(-self.beta * soil_f)) + self.remaining_food
+        self.produced_food = self.alpha * (1.0 - np.exp(-self.beta * soil_f))
+
+        if self.food_storage:
+            self.produced_food += self.remaining_food
 
         # save soil_f for next iteration
         self.previous_f = soil_f
