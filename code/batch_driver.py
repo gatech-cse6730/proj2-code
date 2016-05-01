@@ -16,7 +16,7 @@ class BatchDriver(object):
 
             driver = Driver(vis=False)
 
-            results.append(driver.drive(max_iterations=1000,
+            results.append(driver.drive(max_iterations=1500,
                                         random_seed=random_seed,
                                         initial_pop=50))
 

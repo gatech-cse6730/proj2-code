@@ -101,6 +101,7 @@ class Driver(object):
         self._write_results(population=population.num_people(),
                             food=food.produced_food,
                             kcals=total_kcal,
+                            adults=population.num_adults(cur_sim_time),
                             facility_crop=facility.crop_area,
                             facility_personnel=facility.personnel_capacity,
                             air=air.oxygen_consumed(),
@@ -161,8 +162,9 @@ class Driver(object):
             num_adults = population.num_adults(cur_sim_time)
             # newborns based on number of adults. Average US birthrate in 2014: 0.01342 (indexmundi.com)
             people_born[cur_sim_time % 9] = random.randint(np.rint(num_adults*0.01),np.rint(num_adults*0.020))
+
             print 'total people:', num_people, 'and total adults:', num_adults, 'and total kcal:', total_kcal
-            print 'total capacity:', facility.personnel_capacity
+            print 'total personnel capacity:', facility.personnel_capacity, '; crop area (ha) = ', facility.crop_area / 10000.0
 
             print('-'*100)
 
@@ -170,6 +172,7 @@ class Driver(object):
             self._write_results(population=num_people,
                                 food=food.produced_food,
                                 kcals=total_kcal,
+                                adults=num_adults,
                                 facility_crop=facility.crop_area,
                                 facility_personnel=facility.personnel_capacity,
                                 air=air.oxygen_consumed(),
@@ -202,8 +205,15 @@ class Driver(object):
 
     # Private
 
-    def _write_results(self, population=0, food=0, kcals=0, facility_crop=0,
-                             facility_personnel=0, air=0, power=0):
+    def _write_results(self,
+                       population=0,
+                       food=0,
+                       kcals=0,
+                       adults=0,
+                       facility_crop=0,
+                       facility_personnel=0,
+                       air=0,
+                       power=0):
         """ Writes the results of the simulation to a dictionary. """
 
         self.results['population'].append(population)
@@ -216,4 +226,4 @@ class Driver(object):
 
 if __name__ == '__main__':
     driver = Driver(vis=True)
-    driver.drive(max_iterations=1500,random_seed=0,initial_pop=50,food_storage=False)
+    driver.drive(max_iterations=1500,random_seed=0,initial_pop=2,food_storage=False)

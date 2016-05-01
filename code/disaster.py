@@ -30,6 +30,10 @@ class Disaster(object):
         """
 
         max_index = self.population.num_people()-1
+
+        if max_index+1 < num_people_to_die:
+            num_people_to_die = max_index+1
+
         for i in range(num_people_to_die):
             self.population.remove_person(random.randint(0,max_index))
             max_index -= 1
