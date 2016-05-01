@@ -26,7 +26,7 @@ class Driver(object):
         # If visualization is selected, show it.
         if vis:
             series = ('Population', 'Adults', 'Mcals', 'Food')
-            self.vis = Visualizer(log=True, series=series)
+            self.vis = Visualizer(log_scale=True, series=series)
 
     def drive(self,
               max_iterations=500,
