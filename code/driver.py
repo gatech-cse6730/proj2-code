@@ -187,8 +187,8 @@ class Driver(object):
                 self.vis.add_data(cur_sim_time, {
                     'Population Count': num_people,
                     'Adult Count': num_adults,
-                    'Caloric Requirements (MCal)': total_kcal / 1000.0,
-                    'Produced Food (MCal)': food.produced_food / 1000.0,
+                    'Caloric Requirements (Mcal)': total_kcal / 1000.0,
+                    'Produced Food (Mcal)': food.produced_food / 1000.0,
                     'Air (kg O2)': air.oxygen_consumed(),
                     'Power Consumption (kWh)': power.power_consumed()
                 })
@@ -220,4 +220,4 @@ class Driver(object):
 
 if __name__ == '__main__':
     driver = Driver(vis=True)
-    driver.drive(max_iterations=1000,random_seed=0,initial_pop=50)
+    driver.drive(max_iterations=1500,random_seed=0,initial_pop=50)
