@@ -21,7 +21,6 @@ class Food(object):
 
         Returns:
             A new Food instance.
-
         """
 
         # set attributes to initial values
@@ -44,7 +43,6 @@ class Food(object):
         """
         Initializes food production based on the crop area
         available for crop production.
-
         """
 
         # make sure a maxed out crop can feed the population's needs
@@ -58,14 +56,13 @@ class Food(object):
 
         # save produced food, set remaining food to what was produced
         self.produced_food = e_dot_pop
-        self.remaining_food = self.produced_food
+        self.remaining_food = 0
 
     def reset_food_production(self, e_dot_pop):
         """
         Resets the food production (*remaining_food* attribute).
         Used for resetting the amount of food available after the
         completion of each timestep.
-
         """
 
         self.initialize_food_production(e_dot_pop)
@@ -90,12 +87,26 @@ class Food(object):
                              (1.0 - np.exp(-self.beta * self.previous_f)) / (self.F_r * self.facility.crop_area))
         soil_f = self.previous_f + delta_t * soil_f_dot
 
-        # compute food output, set remaining food to what was produced
-        self.produced_food = self.alpha * (1.0 - np.exp(-self.beta * soil_f))
-        self.remaining_food = self.produced_food
+        # compute food output, add remaining food from last iteration
+        self.produced_food = self.alpha * (1.0 - np.exp(-self.beta * soil_f)) + self.remaining_food
 
         # save soil_f for next iteration
         self.previous_f = soil_f
+
+    def update_food(self, total_kcal):
+        """
+        Calculates the amount of food produced and determines the remaining food
+        based on the total kcal input.
+        """
+        self.calculate_food_production()
+        food_delta = self.produced_food - total_kcal
+
+        if food_delta < 0:
+            self.remaining_food = 0
+        else:
+            self.remaining_food = food_delta
+
+        return food_delta
 
     def request_food(self, amount):
         """

@@ -1,6 +1,7 @@
 from collections import defaultdict
 import numpy as np
 import random
+from pprint import pprint
 
 class Population(object):
     """
@@ -24,7 +25,6 @@ class Population(object):
         """
 
         self.people = people
-        self.carrying_capacity = k
         self.death_age_dist = self.init_death_age_dist()
         self.death_age_dist_len = len(self.death_age_dist)-1
         self.death_dict = defaultdict(list)
@@ -41,7 +41,6 @@ class Population(object):
         self.death_dict = defaultdict(list)
         for i in range(self.num_people()):
             self.death_dict[self.people[i].death_age].append(i)
-
         return True
 
     def init_death_age_dist(self, filename='data/death_age_dist.txt'):
@@ -91,7 +90,8 @@ class Population(object):
 
         for death_index in reversed(self.death_dict.get(sim_time, [])):
             del self.people[death_index]
-
+        # need to regenerate death dict every time due to index issues
+        self.generate_death_dict()
         return True
 
     def num_people(self):
@@ -105,3 +105,10 @@ class Population(object):
         """
 
         return np.sum([person.kcal_requirements(sim_time) for person in self.people])
+
+    def num_adults(self, sim_time):
+        """
+        Returns the number of people between the ages of 18 and 50.
+        """
+        within_age = lambda age: age >= 18 and age <= 50
+        return np.sum([1 if within_age(person.current_age(sim_time)) else 0 for person in self.people])
