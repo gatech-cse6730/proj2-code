@@ -11,10 +11,10 @@ class Person(object):
 
         Args:
             birthday: Integer. Birth moment of the person, in a
-                      number of simulation timesteps.
-            death_age: Integer. Simulation timestep that the person will die at
+                number of simulation timesteps.
+            death_age: Integer. Simulation timestep that the person will die at.
             gender: String. Sex of the person: must be one of 'm',
-                    or 'f'.
+                or 'f'.
 
         Returns:
             A new Person instance.

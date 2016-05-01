@@ -12,7 +12,7 @@ class Disaster(object):
 
         Args:
             population: A <Population> instance that will
-                        be affected by the disaster.
+                be affected by the disaster.
 
         Returns:
             A new Disaster instance.

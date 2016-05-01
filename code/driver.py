@@ -17,7 +17,7 @@ class Driver(object):
 
         Args:
             vis: Boolean. Whether or not to show visualization of the simulation
-                 runs using matplotlib.
+                runs using matplotlib.
 
         Returns:
             A new Driver instance.
@@ -36,7 +36,7 @@ class Driver(object):
         """
         Args:
             max_iterations: Integer. The maximum number of iterations the
-                            simulation should run.
+                simulation should run.
             random_seed: Integer. Seed for the random number generator.
             initial_pop: Integer. The initial population for the population.
 
@@ -62,7 +62,7 @@ class Driver(object):
         # Create a disaster object for the population - this models uncertainty
         # events that may adversely affect the population.
         disaster = Disaster(population)
-        
+
         # Create a facility for population
         #TODO: Update #'s better, I did this for testing
         facility = Facility(10000, 60)
@@ -91,13 +91,13 @@ class Driver(object):
             start = time.time()
             total_kcal = population.kcal_requirements(cur_sim_time)
             print 'completed total kcal in:', time.time() - start
-            
+
             # Food initialization/production
             if cur_sim_time == 0:
                 food = Food(facility, total_kcal)
             else:
                 food.calculate_food_production()
-            
+
             # Food consumption
             #TODO: INTEGRATE BETTER FOOD CONSUMPTION MODEL HERE
             food.remaining_food = food.produced_food - total_kcal
@@ -117,5 +117,6 @@ class Driver(object):
 
         return None
 
-driver = Driver(vis=True)
-driver.drive(10,0,50)
+if __name__ == '__main__':
+    driver = Driver(vis=True)
+    driver.drive(max_iterations=500,random_seed=0,initial_pop=50)

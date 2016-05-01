@@ -3,6 +3,17 @@ import numpy as np
 
 class Visualizer(object):
     def __init__(self, log=False, series=()):
+        """
+        Creates a new Visualizer.
+
+        Args:
+            log: Boolean. Whether to use the log scale.
+
+        Returns:
+            A new Visualizer instance.
+            
+        """
+
         self.opts = {}
         self.opts['log'] = log
 
