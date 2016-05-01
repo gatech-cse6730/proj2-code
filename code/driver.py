@@ -17,7 +17,7 @@ class Driver(object):
 
         Args:
             vis: Boolean. Whether or not to show visualization of the simulation
-                 runs using matplotlib.
+                runs using matplotlib.
 
         Returns:
             A new Driver instance.
@@ -36,7 +36,7 @@ class Driver(object):
         """
         Args:
             max_iterations: Integer. The maximum number of iterations the
-                            simulation should run.
+                simulation should run.
             random_seed: Integer. Seed for the random number generator.
             initial_pop: Integer. The initial population for the population.
 

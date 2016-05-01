@@ -12,10 +12,10 @@ class Facility(object):
         Creates a new Facility.
 
         Args:
-            crop_area: Integer. Area available for growing crops used
-                       for food, in m^2.
-            personnel_capacity: Integer. Maximum number of humans that
-                                can be supported by the facility.
+            crop_area: Integer. Area available for growing crops used for food,
+                in m^2.
+            personnel_capacity: Integer. Maximum number of humans that can be
+                supported by the facility.
 
         Returns:
             A new Facility instance.

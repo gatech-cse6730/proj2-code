@@ -10,14 +10,13 @@ class Population(object):
 
     """
 
-    def __init__(self, people=[], k=1.0):
+    def __init__(self, people=[]):
         """
         Creates a new Population.
 
         Args:
-            people: List. A list of <Person> instances that will
-                    comprise the population.
-            k: Float. Carrying capacity of the population.
+            people: List. A list of <Person> instances that will comprise the
+                population.
 
         Returns:
             A new Population instance.
