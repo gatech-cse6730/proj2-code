@@ -80,9 +80,13 @@ class Visualizer(object):
     def _setup(self):
         """ Sets up the plot. Initializes each series and adds a legend. """
 
+        # Initialize the x-axis data points.
         self.x = []
+
+        # Initialize the y-axis series.
         self.y = { s: { 'color': np.random.rand(3,1), 'data': [] } for s in self.series }
 
+        # Render the plot.
         self._plot()
 
         # Create the legend.
@@ -90,6 +94,7 @@ class Visualizer(object):
 
     def _plot(self):
         """ Re-renders the plot. """
-        
+
+        # For each series, plot the current data points.
         for label, data_dict in self.y.iteritems():
             self.ax.scatter(self.x, data_dict['data'], c=data_dict['color'], label=label)
