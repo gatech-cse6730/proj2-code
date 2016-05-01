@@ -13,7 +13,7 @@ from air import Air
 
 class Driver(object):
     def __init__(self, vis=False):
-        '''
+        """
         Creates a new Driver.
 
         Args:
@@ -22,7 +22,7 @@ class Driver(object):
 
         Returns:
             A new Driver instance.
-        '''
+        """
 
         self.vis = vis
 
@@ -35,7 +35,7 @@ class Driver(object):
               max_iterations=500,
               random_seed=0,
               initial_pop=50):
-        '''
+        """
         Args:
             max_iterations: Integer. The maximum number of iterations the
                 simulation should run.
@@ -44,7 +44,7 @@ class Driver(object):
 
         Returns:
             None.
-        '''
+        """
 
         # Dictionary to keep track of results
         self.results = defaultdict(list)
