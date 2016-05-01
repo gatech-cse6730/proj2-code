@@ -30,13 +30,7 @@ class Driver(object):
 
         # If visualization is selected, show it.
         if self.vis:
-            series = ('Population Count',
-                      'Adult Count',
-                      'Caloric Requirements (Mcal)',
-                      'Produced Food (Mcal)',
-                      'Air (kg O2)',
-                      'Power Consumption (kWh)')
-            self.vis = Visualizer(series=series)
+            self.vis = Visualizer()
 
     def drive(self,
               max_iterations=500,
@@ -52,6 +46,7 @@ class Driver(object):
 
         Returns:
             None.
+
         """
 
         # Dictionary to keep track of results
@@ -221,4 +216,4 @@ class Driver(object):
 
 if __name__ == '__main__':
     driver = Driver(vis=True)
-    driver.drive(max_iterations=1500,random_seed=0,initial_pop=50)
+    driver.drive(max_iterations=1500,random_seed=0,initial_pop=50,food_storage=False)

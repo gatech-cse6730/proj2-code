@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.ticker as plticker
+import time
 
 class Visualizer(object):
     def __init__(self, log_scale=False, series=()):
@@ -19,13 +20,18 @@ class Visualizer(object):
         self.log_scale = log_scale
 
         # Set the data series for the graph.
-        self.series = series
+        self.series = ('Population Count',
+                       'Adult Count',
+                       'Caloric Requirements (Mcal)',
+                       'Produced Food (Mcal)',
+                       'Air (kg O2)',
+                       'Power Consumption (kWh)')
 
         # Enable interactive mode.
         plt.ion()
 
         # Initialize the plot.
-        f, self.axarr = plt.subplots(len(series), sharex=True)
+        f, self.axarr = plt.subplots(len(self.series), sharex=True)
         self._setup()
 
     def update(self):
@@ -87,7 +93,8 @@ class Visualizer(object):
             None.
         """
 
-        plt.savefig('results/results.png', bbox_inches='tight')
+        fname = 'results/results-%s.png' % time.strftime('%H_%M_%S')
+        plt.savefig(fname, bbox_inches='tight')
 
     # Private methods
 
@@ -128,7 +135,7 @@ class Visualizer(object):
             self.axarr[indx].scatter(self.x, data, c=data_dict['color'], label=label)
 
     def _roundup(self, x):
-        """ Rounds up to a nice number. """
+        """ Rounds x up to a nice number. """
 
         if x < 100:
             fact = 10
