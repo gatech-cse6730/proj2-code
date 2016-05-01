@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.ticker as plticker
 
 class Visualizer(object):
     def __init__(self, log_scale=False, series=()):
@@ -24,8 +25,7 @@ class Visualizer(object):
         plt.ion()
 
         # Initialize the plot.
-        fig = plt.figure()
-        self.ax = fig.add_subplot(111)
+        f, self.axarr = plt.subplots(len(series), sharex=True)
         self._setup()
 
     def update(self):
@@ -46,7 +46,8 @@ class Visualizer(object):
         # If the log scale option has been provided, plot the data using a
         # log-scale.
         if self.log_scale:
-            self.ax.set_yscale('log')
+            for indx, series in enumerate(self.series):
+                self.axarr[indx].set_yscale('log')
 
         # A short pause so Mac OS X 10.11.3 doesn't break.
         plt.pause(0.0001)
@@ -103,11 +104,41 @@ class Visualizer(object):
         self._plot()
 
         # Create the legend.
-        plt.legend(loc='center right', bbox_to_anchor=(1.3, 0.5), fancybox=True)
+        for indx, s in enumerate(self.series):
+            self.axarr[indx].legend(loc='center right', bbox_to_anchor=(1.3, 0.5), fancybox=True)
 
     def _plot(self):
         """ Re-renders the plot. """
 
         # For each series, plot the current data points.
-        for label, data_dict in self.y.iteritems():
-            self.ax.scatter(self.x, data_dict['data'], c=data_dict['color'], label=label)
+        for indx, (label, data_dict) in enumerate(self.y.iteritems()):
+            data = data_dict['data']
+
+            if len(data) is not 0:
+                the_min = np.min(data)
+                the_max = np.max(data)
+
+                spacing = int((the_max - the_min) / float(3.0))
+                spacing = 1 if spacing == 0.0 else spacing
+                spacing = self._roundup(spacing)
+
+                loc = plticker.MultipleLocator(base=spacing)
+                self.axarr[indx].yaxis.set_major_locator(loc)
+
+            self.axarr[indx].scatter(self.x, data, c=data_dict['color'], label=label)
+
+    def _roundup(self, x):
+        """ Rounds up to a nice number. """
+
+        if x < 100:
+            fact = 10
+        elif x < 1000:
+            fact = 100
+        elif x < 10000:
+            fact = 1000
+        elif x < 100000:
+            fact = 10000
+        else:
+            fact = 100000
+
+        return x if x % fact == 0 else x + fact - x % fact

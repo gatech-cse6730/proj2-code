@@ -32,11 +32,11 @@ class Driver(object):
         if self.vis:
             series = ('Population Count',
                       'Adult Count',
-                      'Caloric Requirements (MCal)',
-                      'Produced Food (MCal)',
+                      'Caloric Requirements (Mcal)',
+                      'Produced Food (Mcal)',
                       'Air (kg O2)',
                       'Power Consumption (kWh)')
-            self.vis = Visualizer(log_scale=True, series=series)
+            self.vis = Visualizer(series=series)
 
     def drive(self,
               max_iterations=500,
