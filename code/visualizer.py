@@ -75,6 +75,19 @@ class Visualizer(object):
         for label, datum in data.iteritems():
             self.y[label]['data'].append(datum)
 
+    def savefig(self):
+        """
+        Saves the current figure as an image.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
+
+        plt.savefig('results/results.png', bbox_inches='tight')
+
     # Private methods
 
     def _setup(self):
@@ -90,7 +103,7 @@ class Visualizer(object):
         self._plot()
 
         # Create the legend.
-        plt.legend(loc='upper left');
+        plt.legend(loc='best', fancybox=True, framealpha=0.5);
 
     def _plot(self):
         """ Re-renders the plot. """

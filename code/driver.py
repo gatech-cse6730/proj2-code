@@ -5,10 +5,11 @@ import numpy as np
 
 from population import Population
 from visualizer import Visualizer
+from facility import Facility
 from disaster import Disaster
 from person import Person
 from food import Food
-from facility import Facility
+from air import Air
 
 class Driver(object):
     def __init__(self, vis=False):
@@ -25,7 +26,7 @@ class Driver(object):
 
         # If visualization is selected, show it.
         if vis:
-            series = ('Population', 'Adults', 'Mcals', 'Food')
+            series = ('Population', 'Adults', 'Mcals', 'Food', 'Air')
             self.vis = Visualizer(log_scale=True, series=series)
 
     def drive(self,
@@ -59,6 +60,9 @@ class Driver(object):
         # Initialize a population.
         population = Population()
 
+        # Initialize an air instance for consumpting oxygen consumption.
+        air = Air(population)
+
         # Initial Iteration
         cur_sim_time = 0
         start = time.time()
@@ -91,6 +95,7 @@ class Driver(object):
         results["kcals"].append(total_kcal)
         results["facility_crop"].append(facility.crop_area)
         results["facility_personnel"].append(facility.personnel_capacity)
+        results["air"].append(air.oxygen_consumed())
 
         # Main iteration loop
         for cur_sim_time in range(1, max_sim_time):
@@ -158,11 +163,20 @@ class Driver(object):
             results["kcals"].append(total_kcal)
             results["facility_crop"].append(facility.crop_area)
             results["facility_personnel"].append(facility.personnel_capacity)
+            results["air"].append(air.oxygen_consumed())
 
             # visualization
             if cur_sim_time % 10 == 0:
-                self.vis.add_data(cur_sim_time, { 'Population': num_people, 'Adults': num_adults, 'Mcals': total_kcal / 1000.0, 'Food': food.produced_food / 1000.0})
+                self.vis.add_data(cur_sim_time, {
+                    'Population': num_people,
+                    'Adults': num_adults,
+                    'Mcals': total_kcal / 1000.0,
+                    'Food': food.produced_food / 1000.0,
+                    'Air': air.oxygen_consumed()
+                })
                 self.vis.update()
+
+        self.vis.savefig()
 
         return results
 
