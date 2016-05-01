@@ -7,6 +7,7 @@ from population import Population
 from visualizer import Visualizer
 from facility import Facility
 from disaster import Disaster
+from power import Power
 from person import Person
 from food import Food
 from air import Air
@@ -22,13 +23,19 @@ class Driver(object):
 
         Returns:
             A new Driver instance.
+
         """
 
         self.vis = vis
 
         # If visualization is selected, show it.
         if self.vis:
-            series = ('Population', 'Adults', 'Mcals', 'Food', 'Air')
+            series = ('Population Count',
+                      'Adult Count',
+                      'Caloric Requirements (MCal)',
+                      'Produced Food (MCal)',
+                      'Air (kg O2)',
+                      'Power Consumption (kWh)')
             self.vis = Visualizer(log_scale=True, series=series)
 
     def drive(self,
@@ -62,8 +69,11 @@ class Driver(object):
         # Initialize a population.
         population = Population()
 
-        # Initialize an air instance for consumpting oxygen consumption.
+        # Initialize an air instance for modeling oxygen consumption.
         air = Air(population)
+
+        # Initialize a power instance for modeling power consumption.
+        power = Power(population)
 
         # Initial Iteration
         cur_sim_time = 0
@@ -97,7 +107,8 @@ class Driver(object):
                             kcals=total_kcal,
                             facility_crop=facility.crop_area,
                             facility_personnel=facility.personnel_capacity,
-                            air=air.oxygen_consumed())
+                            air=air.oxygen_consumed(),
+                            power=power.power_consumed())
 
         # Main iteration loop
         for cur_sim_time in range(1, max_sim_time):
@@ -153,30 +164,33 @@ class Driver(object):
             num_people = population.num_people()
             num_adults = population.num_adults(cur_sim_time)
             # newborns based on number of adults. Average US birthrate in 2014: 0.01342 (indexmundi.com)
-            people_born[cur_sim_time % 9] = random.randint(int(num_adults*0.01), 1 if num_adults*0.020 >= 0.5 else 0)
+            people_born[cur_sim_time % 9] = random.randint(np.rint(num_adults*0.01),np.rint(num_adults*0.020))
             print 'total people:', num_people, 'and total adults:', num_adults, 'and total kcal:', total_kcal
             print 'total capacity:', facility.personnel_capacity
 
             print('-'*100)
 
             # Record results of the iteration.
-            self._write_results(population=population.num_people(),
+            self._write_results(population=num_people,
                                 food=food.produced_food,
                                 kcals=total_kcal,
                                 facility_crop=facility.crop_area,
                                 facility_personnel=facility.personnel_capacity,
-                                air=air.oxygen_consumed())
+                                air=air.oxygen_consumed(),
+                                power=power.power_consumed())
 
             # If the visualization option has been selected, plot the results
             # every 10 timesteps.
             if self.vis and cur_sim_time % 10 == 0:
+
                 # Add data for the chart.
                 self.vis.add_data(cur_sim_time, {
-                    'Population': num_people,
-                    'Adults': num_adults,
-                    'Mcals': total_kcal / 1000.0,
-                    'Food': food.produced_food / 1000.0,
-                    'Air': air.oxygen_consumed()
+                    'Population Count': num_people,
+                    'Adult Count': num_adults,
+                    'Caloric Requirements (MCal)': total_kcal / 1000.0,
+                    'Produced Food (MCal)': food.produced_food / 1000.0,
+                    'Air (kg O2)': air.oxygen_consumed(),
+                    'Power Consumption (kWh)': power.power_consumed()
                 })
 
                 # Update the chart, re-rendering.
@@ -193,7 +207,7 @@ class Driver(object):
     # Private
 
     def _write_results(self, population=0, food=0, kcals=0, facility_crop=0,
-                             facility_personnel=0, air=0):
+                             facility_personnel=0, air=0, power=0):
         """ Writes the results of the simulation to a dictionary. """
 
         self.results['population'].append(population)
@@ -202,6 +216,7 @@ class Driver(object):
         self.results['facility_crop'].append(facility_crop)
         self.results['facility_personnel'].append(facility_personnel)
         self.results['air'].append(air)
+        self.results['power'].append(power)
 
 if __name__ == '__main__':
     driver = Driver(vis=True)

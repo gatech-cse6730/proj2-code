@@ -103,7 +103,7 @@ class Visualizer(object):
         self._plot()
 
         # Create the legend.
-        plt.legend(loc='best', fancybox=True, framealpha=0.5);
+        plt.legend(loc='center right', bbox_to_anchor=(1.3, 0.5), fancybox=True)
 
     def _plot(self):
         """ Re-renders the plot. """

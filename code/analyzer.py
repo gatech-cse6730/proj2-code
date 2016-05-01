@@ -20,6 +20,7 @@ class Analyzer(object):
 
     def prepare_results(self):
         batch = BatchDriver()
+        results = batch.drive()
 
     def prepare_plots(self):
         sns.set_style('darkgrid')
@@ -37,7 +38,7 @@ class Analyzer(object):
         ax.errorbar(a,b,yerr=c)
         ax.scatter(a,b,s=40)
         ax.plot(a,b)
-        
+
         ax.errorbar(a,d,yerr=c)
         ax.scatter(a,d,s=40)
         ax.plot(a,d)
@@ -48,4 +49,4 @@ class Analyzer(object):
 if __name__ == '__main__':
     analyzer = Analyzer()
     analyzer.prepare_results()
-    analyzer.prepare_plots()
+    #analyzer.prepare_plots()
