@@ -4,15 +4,34 @@ class Air(object):
 
     """
 
-    def __init__(self):
+    OXYGEN_PER_HUMAN_PER_MONTH = 25.55
+
+    def __init__(self, population):
         """
         Creates a new Air instance.
 
         Args:
-
+            population: <Population>. Population instance to consider when
+                computing consumption information.
 
         Returns:
             A new Air instance.
 
         """
-        pass
+
+        self.population = population
+
+
+    def oxygen_consumed(self):
+        """
+        Returns the oxygen consumed by the population this timestep.
+
+        Args:
+            None
+
+        Returns:
+            Float. Oxygen consumed in a month (kg).
+
+        """
+        
+        return self.population.num_people() * self.OXYGEN_PER_HUMAN_PER_MONTH

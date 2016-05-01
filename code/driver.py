@@ -5,10 +5,12 @@ import numpy as np
 
 from population import Population
 from visualizer import Visualizer
+from facility import Facility
 from disaster import Disaster
+from power import Power
 from person import Person
 from food import Food
-from facility import Facility
+from air import Air
 
 class Driver(object):
     def __init__(self, vis=False):
@@ -21,17 +23,20 @@ class Driver(object):
 
         Returns:
             A new Driver instance.
+
         """
 
+        self.vis = vis
+
         # If visualization is selected, show it.
-        if vis:
-            series = ('Population', 'Adults', 'Mcals', 'Food')
-            self.vis = Visualizer(log=True, series=series)
+        if self.vis:
+            self.vis = Visualizer()
 
     def drive(self,
               max_iterations=500,
               random_seed=0,
-              initial_pop=50):
+              initial_pop=50,
+              food_storage=False):
         """
         Args:
             max_iterations: Integer. The maximum number of iterations the
@@ -41,10 +46,11 @@ class Driver(object):
 
         Returns:
             None.
+
         """
 
         # Dictionary to keep track of results
-        results = defaultdict(list)
+        self.results = defaultdict(list)
 
         # Seed the random number generator.
         random.seed(random_seed)
@@ -58,6 +64,12 @@ class Driver(object):
 
         # Initialize a population.
         population = Population()
+
+        # Initialize an air instance for modeling oxygen consumption.
+        air = Air(population)
+
+        # Initialize a power instance for modeling power consumption.
+        power = Power(population)
 
         # Initial Iteration
         cur_sim_time = 0
@@ -79,18 +91,21 @@ class Driver(object):
         facility = Facility(30000.0/30.0*(initial_pop+30), initial_pop+30)
 
         # Food initialization
-        food = Food(facility, total_kcal)
+        food = Food(facility, total_kcal, food_storage=food_storage)
 
         # Create a disaster object for the population - this models uncertainty
         # events that may adversely affect the population & food
         disaster = Disaster(population, food)
 
         # Write initial loop results
-        results["population"].append(population.num_people())
-        results["food"].append(food.produced_food)
-        results["kcals"].append(total_kcal)
-        results["facility_crop"].append(facility.crop_area)
-        results["facility_personnel"].append(facility.personnel_capacity)
+        self._write_results(population=population.num_people(),
+                            food=food.produced_food,
+                            kcals=total_kcal,
+                            adults=population.num_adults(cur_sim_time),
+                            facility_crop=facility.crop_area,
+                            facility_personnel=facility.personnel_capacity,
+                            air=air.oxygen_consumed(),
+                            power=power.power_consumed())
 
         # Main iteration loop
         for cur_sim_time in range(1, max_sim_time):
@@ -146,26 +161,69 @@ class Driver(object):
             num_people = population.num_people()
             num_adults = population.num_adults(cur_sim_time)
             # newborns based on number of adults. Average US birthrate in 2014: 0.01342 (indexmundi.com)
-            people_born[cur_sim_time % 9] = random.randint(int(num_adults*0.01), 1 if num_adults*0.020 >= 0.5 else 0)
+            people_born[cur_sim_time % 9] = random.randint(np.rint(num_adults*0.01),np.rint(num_adults*0.020))
+
             print 'total people:', num_people, 'and total adults:', num_adults, 'and total kcal:', total_kcal
-            print 'total capacity:', facility.personnel_capacity
+            print 'total personnel capacity:', facility.personnel_capacity, '; crop area (ha) = ', facility.crop_area / 10000.0
 
             print('-'*100)
 
-            # record results
-            results["population"].append(num_people)
-            results["food"].append(food.produced_food)
-            results["kcals"].append(total_kcal)
-            results["facility_crop"].append(facility.crop_area)
-            results["facility_personnel"].append(facility.personnel_capacity)
+            # Record results of the iteration.
+            self._write_results(population=num_people,
+                                food=food.produced_food,
+                                kcals=total_kcal,
+                                adults=num_adults,
+                                facility_crop=facility.crop_area,
+                                facility_personnel=facility.personnel_capacity,
+                                air=air.oxygen_consumed(),
+                                power=power.power_consumed())
 
-            # visualization
-            if cur_sim_time % 10 == 0:
-                self.vis.add_data(cur_sim_time, { 'Population': num_people, 'Adults': num_adults, 'Mcals': total_kcal / 1000.0, 'Food': food.produced_food / 1000.0})
+            # If the visualization option has been selected, plot the results
+            # every 10 timesteps.
+            if self.vis and cur_sim_time % 10 == 0:
+
+                # Add data for the chart.
+                self.vis.add_data(cur_sim_time, {
+                    'Population Count': num_people,
+                    'Adult Count': num_adults,
+                    'Caloric Requirements (Mcal)': total_kcal / 1000.0,
+                    'Produced Food (Mcal)': food.produced_food / 1000.0,
+                    'Air (kg O2)': air.oxygen_consumed(),
+                    'Power Consumption (kWh)': power.power_consumed()
+                })
+
+                # Update the chart, re-rendering.
                 self.vis.update()
 
-        return results
+        # If visualization has been selected,
+        if self.vis:
+            # Save the last rendered chart as a png image.
+            self.vis.savefig()
+
+        # Return the results dict.
+        return self.results
+
+    # Private
+
+    def _write_results(self,
+                       population=0,
+                       food=0,
+                       kcals=0,
+                       adults=0,
+                       facility_crop=0,
+                       facility_personnel=0,
+                       air=0,
+                       power=0):
+        """ Writes the results of the simulation to a dictionary. """
+
+        self.results['population'].append(population)
+        self.results['food'].append(food)
+        self.results['kcals'].append(kcals)
+        self.results['facility_crop'].append(facility_crop)
+        self.results['facility_personnel'].append(facility_personnel)
+        self.results['air'].append(air)
+        self.results['power'].append(power)
 
 if __name__ == '__main__':
     driver = Driver(vis=True)
-    driver.drive(max_iterations=1000,random_seed=0,initial_pop=50)
+    driver.drive(max_iterations=1500,random_seed=0,initial_pop=2,food_storage=False)
