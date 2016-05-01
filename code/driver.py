@@ -13,7 +13,7 @@ from air import Air
 
 class Driver(object):
     def __init__(self, vis=False):
-        """
+        '''
         Creates a new Driver.
 
         Args:
@@ -22,10 +22,12 @@ class Driver(object):
 
         Returns:
             A new Driver instance.
-        """
+        '''
+
+        self.vis = vis
 
         # If visualization is selected, show it.
-        if vis:
+        if self.vis:
             series = ('Population', 'Adults', 'Mcals', 'Food', 'Air')
             self.vis = Visualizer(log_scale=True, series=series)
 
@@ -33,7 +35,7 @@ class Driver(object):
               max_iterations=500,
               random_seed=0,
               initial_pop=50):
-        """
+        '''
         Args:
             max_iterations: Integer. The maximum number of iterations the
                 simulation should run.
@@ -42,10 +44,10 @@ class Driver(object):
 
         Returns:
             None.
-        """
+        '''
 
         # Dictionary to keep track of results
-        results = defaultdict(list)
+        self.results = defaultdict(list)
 
         # Seed the random number generator.
         random.seed(random_seed)
@@ -90,12 +92,12 @@ class Driver(object):
         disaster = Disaster(population, food)
 
         # Write initial loop results
-        results["population"].append(population.num_people())
-        results["food"].append(food.produced_food)
-        results["kcals"].append(total_kcal)
-        results["facility_crop"].append(facility.crop_area)
-        results["facility_personnel"].append(facility.personnel_capacity)
-        results["air"].append(air.oxygen_consumed())
+        self._write_results(population=population.num_people(),
+                            food=food.produced_food,
+                            kcals=total_kcal,
+                            facility_crop=facility.crop_area,
+                            facility_personnel=facility.personnel_capacity,
+                            air=air.oxygen_consumed())
 
         # Main iteration loop
         for cur_sim_time in range(1, max_sim_time):
@@ -157,16 +159,18 @@ class Driver(object):
 
             print('-'*100)
 
-            # record results
-            results["population"].append(num_people)
-            results["food"].append(food.produced_food)
-            results["kcals"].append(total_kcal)
-            results["facility_crop"].append(facility.crop_area)
-            results["facility_personnel"].append(facility.personnel_capacity)
-            results["air"].append(air.oxygen_consumed())
+            # Record results of the iteration.
+            self._write_results(population=population.num_people(),
+                                food=food.produced_food,
+                                kcals=total_kcal,
+                                facility_crop=facility.crop_area,
+                                facility_personnel=facility.personnel_capacity,
+                                air=air.oxygen_consumed())
 
-            # visualization
-            if cur_sim_time % 10 == 0:
+            # If the visualization option has been selected, plot the results
+            # every 10 timesteps.
+            if self.vis and cur_sim_time % 10 == 0:
+                # Add data for the chart.
                 self.vis.add_data(cur_sim_time, {
                     'Population': num_people,
                     'Adults': num_adults,
@@ -174,11 +178,30 @@ class Driver(object):
                     'Food': food.produced_food / 1000.0,
                     'Air': air.oxygen_consumed()
                 })
+
+                # Update the chart, re-rendering.
                 self.vis.update()
 
-        self.vis.savefig()
+        # If visualization has been selected,
+        if self.vis:
+            # Save the last rendered chart as a png image.
+            self.vis.savefig()
 
-        return results
+        # Return the results dict.
+        return self.results
+
+    # Private
+
+    def _write_results(self, population=0, food=0, kcals=0, facility_crop=0,
+                             facility_personnel=0, air=0):
+        """ Writes the results of the simulation to a dictionary. """
+
+        self.results['population'].append(population)
+        self.results['food'].append(food)
+        self.results['kcals'].append(kcals)
+        self.results['facility_crop'].append(facility_crop)
+        self.results['facility_personnel'].append(facility_personnel)
+        self.results['air'].append(air)
 
 if __name__ == '__main__':
     driver = Driver(vis=True)
