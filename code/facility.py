@@ -19,8 +19,33 @@ class Facility(object):
 
         Returns:
             A new Facility instance.
-
         """
 
         self.crop_area = crop_area
         self.personnel_capacity = personnel_capacity
+        self.pod_add_dict = {}
+        self.in_construction = False
+
+    def start_pod_construction(self, cur_sim_time, months_to_complete):
+        """
+        Schedules the completion of a new pod, adding more crop area and
+        personnel capacity. Only starts construction if one is not already in
+        progress.
+        """
+        if self.in_construction:
+            # already building one
+            return
+        self.pod_add_dict[cur_sim_time + months_to_complete] = True
+        self.in_construction = True
+        return True
+
+    def add_pod(self, cur_sim_time):
+        """
+        Completes the addition of a new pod, adding more crop area and
+        personnel capacity.
+        """
+        if self.pod_add_dict.get(cur_sim_time, False):
+            self.crop_area += 30000
+            self.personnel_capacity += 30
+            self.in_construction = False
+        return True
