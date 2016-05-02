@@ -69,7 +69,7 @@ class Analyzer(object):
         ax.plot(a,b)
 
         plt.show()
-        plt.savefig('results/results-tot.png', bbox_inches='tight')
+        plt.savefig('results/results-111.png', bbox_inches='tight')
 
 if __name__ == '__main__':
     analyzer = Analyzer(num_sims=30)

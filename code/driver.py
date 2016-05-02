@@ -80,14 +80,13 @@ class Driver(object):
         for add_count in range (initial_pop):
             init_age = cur_sim_time - initial_ages[add_count % len(initial_ages)]*12.0
             population.add_person(Person(init_age, population.get_rand_death_time(cur_sim_time), random.random()))
-        #print 'added', people_born.get(cur_sim_time % 9, 0), 'people in', time.time()-start
 
         start = time.time()
         total_kcal = population.kcal_requirements(cur_sim_time)
 
-        # Create a facility for population
-        # Crop area of 25000 feeds about 30 people
-        facility = Facility(30000.0/30.0*(initial_pop+30), initial_pop+30)
+        # Create a facility for the population.
+        initial_crop_area = (2.5 * total_kcal) / 127.9579417
+        facility = Facility(initial_crop_area, initial_pop+30)
 
         # Food initialization
         food = Food(facility, total_kcal, food_storage=food_storage)
@@ -113,9 +112,6 @@ class Driver(object):
 
             # Diasters
             if random.random() <= 0.01:
-                #ratio = random.random()/10.0
-                #disaster.create_disaster(ratio)
-                #print 'DISASTER killed', ratio, 'in:', time.time() - start
                 death_from_disaster = random.randint(1,20)
                 disaster.create_disaster(death_from_disaster)
                 print 'DISASTER killed', death_from_disaster, 'people and', (death_from_disaster+10)*2500.0, 'food in:', time.time() - start
@@ -132,22 +128,19 @@ class Driver(object):
                 if population.num_people() < facility.personnel_capacity:
                     population.add_person(Person(cur_sim_time, population.get_rand_death_time(cur_sim_time), random.random()))
                     born_count += 1
-            #print 'added', born_count, 'people in', time.time()-start
 
             # Removing the dead
             start = time.time()
             people_to_kill = len(population.death_dict.get(cur_sim_time, []))
             population.remove_dead(cur_sim_time)
-            #print 'removed', people_to_kill, 'people in:', time.time() - start
 
             # Calculating total kcal
             start = time.time()
             total_kcal = population.kcal_requirements(cur_sim_time)
-            #print 'completed total kcal in:', time.time() - start
 
             # Food consumption
             food_delta = food.update_food(total_kcal)
-            #print 'produced food = ', food.produced_food, '; remaining food = ', food.remaining_food
+
             # if not enough food
             if food_delta < 0:
                 # people who are unfed will die, starting with oldest people
@@ -159,12 +152,9 @@ class Driver(object):
             # Calculating how many newborns to be created in 9 months time
             num_people = population.num_people()
             num_adults = population.num_adults(cur_sim_time)
+
             # newborns based on number of adults. Average US birthrate in 2014: 0.01342 (indexmundi.com)
             people_born[cur_sim_time % 9] = random.randint(np.rint(num_adults*0.01),np.rint(num_adults*0.020))
-
-            #print 'total people:', num_people, 'and total adults:', num_adults, 'and total kcal:', total_kcal
-            #print 'total personnel capacity:', facility.personnel_capacity, '; crop area (ha) = ', facility.crop_area / 10000.0
-            #print('-'*100)
 
             # Record results of the iteration.
             self._write_results(population=num_people,
