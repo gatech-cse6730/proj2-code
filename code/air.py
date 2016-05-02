@@ -1,7 +1,6 @@
 class Air(object):
     """
     The Air class is used for modeling air.
-
     """
 
     OXYGEN_PER_HUMAN_PER_MONTH = 25.55
@@ -16,7 +15,6 @@ class Air(object):
 
         Returns:
             A new Air instance.
-
         """
 
         self.population = population
@@ -31,7 +29,6 @@ class Air(object):
 
         Returns:
             Float. Oxygen consumed in a month (kg).
-
         """
 
         return self.population.num_people() * self.OXYGEN_PER_HUMAN_PER_MONTH

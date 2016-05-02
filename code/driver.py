@@ -18,12 +18,11 @@ class Driver(object):
         Creates a new Driver.
 
         Args:
-            vis: Boolean. Whether or not to show visualization of the simulation
-                runs using matplotlib.
+            vis: <Boolean>. Flag to show visualization of the simulation
+                 runs using matplotlib.
 
         Returns:
             A new Driver instance.
-
         """
 
         self.vis = vis
@@ -38,15 +37,18 @@ class Driver(object):
               initial_pop=50,
               food_storage=False):
         """
+        Main driver function to run the simulation.
+
         Args:
-            max_iterations: Integer. The maximum number of iterations the
-                simulation should run.
-            random_seed: Integer. Seed for the random number generator.
-            initial_pop: Integer. The initial population for the population.
+            max_iterations: <Integer>. The maximum number of iterations the
+                            simulation should run.
+            random_seed: <Integer>. Seed for the random number generator.
+            initial_pop: <Integer>. The initial population for the population.
+            food_storage: <Boolean>. Flag to allow storing excess produced food
+                          for use in future iterations.
 
         Returns:
             None.
-
         """
 
         # Dictionary to keep track of results
@@ -73,15 +75,14 @@ class Driver(object):
 
         # Initial Iteration
         cur_sim_time = 0
-        start = time.time()
 
         # Add initial population
+        # Ages of initial population
         initial_ages = [10, 18, 20, 25, 28, 30, 32, 35, 40, 45, 50, 55]
         for add_count in range (initial_pop):
             init_age = cur_sim_time - initial_ages[add_count % len(initial_ages)]*12.0
             population.add_person(Person(init_age, population.get_rand_death_time(cur_sim_time), random.random()))
 
-        start = time.time()
         total_kcal = population.kcal_requirements(cur_sim_time)
 
         # Create a facility for the population.
@@ -108,16 +109,14 @@ class Driver(object):
         # Main iteration loop
         for cur_sim_time in range(1, max_sim_time):
             print 'current sim time:', cur_sim_time
-            start = time.time()
 
-            # Diasters
+            # Disasters
             if random.random() <= 0.01:
                 death_from_disaster = random.randint(1,20)
                 disaster.create_disaster(death_from_disaster)
-                print 'DISASTER killed', death_from_disaster, 'people and', (death_from_disaster+10)*2500.0, 'food in:', time.time() - start
-                start = time.time()
 
-            # If enough food, expand facility. Assume 3 month build time
+            # If enough food and personnel capacity being reached, expand facility.
+            # Assume 3 month build time.
             if food.remaining_food > 2500*10 and (facility.personnel_capacity - population.num_people()) <= 10:
                 facility.start_pod_construction(cur_sim_time, 3)
                 facility.add_pod(cur_sim_time)
@@ -130,20 +129,18 @@ class Driver(object):
                     born_count += 1
 
             # Removing the dead
-            start = time.time()
             people_to_kill = len(population.death_dict.get(cur_sim_time, []))
             population.remove_dead(cur_sim_time)
 
             # Calculating total kcal
-            start = time.time()
             total_kcal = population.kcal_requirements(cur_sim_time)
 
             # Food consumption
             food_delta = food.update_food(total_kcal)
 
-            # if not enough food
+            # If not enough food
             if food_delta < 0:
-                # people who are unfed will die, starting with oldest people
+                # People who are unfed will die, starting with oldest people
                 while (food_delta < 0):
                     food_delta = food_delta + population.people[0].kcal_requirements(cur_sim_time)
                     population.remove_person(0)
@@ -153,7 +150,8 @@ class Driver(object):
             num_people = population.num_people()
             num_adults = population.num_adults(cur_sim_time)
 
-            # newborns based on number of adults. Average US birthrate in 2014: 0.01342 (indexmundi.com)
+            # Number of newborns is based on number of adults between 18-55.
+            # Average US birthrate in 2014: 0.01342 (indexmundi.com)
             people_born[cur_sim_time % 9] = random.randint(np.rint(num_adults*0.01),np.rint(num_adults*0.020))
 
             # Record results of the iteration.
@@ -192,7 +190,6 @@ class Driver(object):
         return self.results
 
     # Private
-
     def _write_results(self,
                        population=0,
                        food=0,
