@@ -2,7 +2,6 @@ class Person(object):
     """
     The Person class is used for modeling an individual
     human instance in the simulation.
-
     """
 
     def __init__(self, birthday, death_age, gender):
@@ -10,15 +9,14 @@ class Person(object):
         Creates a new Person.
 
         Args:
-            birthday: Integer. Birth moment of the person, in a
-                number of simulation timesteps.
-            death_age: Integer. Simulation timestep that the person will die at.
-            gender: String. Sex of the person: must be one of 'm',
-                or 'f'.
+            birthday: <Integer>. Birth moment of the person, in a number of
+                      simulation timesteps.
+            death_age: <Integer>. Simulation timestep when the person will die.
+            gender: <Float>. Float determinng the gender of the person. Male if
+                    0.5 or greater, female if less than 0.5.
 
         Returns:
             A new Person instance.
-
         """
 
         self.birthday = birthday
@@ -31,6 +29,11 @@ class Person(object):
         simulation time (as an integer number of timesteps). Assumes each
         timestep corresponds to one month.
 
+        Args:
+            sim_time: <Integer>. Current simulation iteration.
+
+        Returns:
+            <Integer>. Age in years of the Person.
         """
 
         return (sim_time - self.birthday) / 12.0
@@ -40,7 +43,11 @@ class Person(object):
         Computes the monthly kcal intake requirements for the person.
         Depends on age and gender.
 
-        Returns the number of kcals as an integer.
+        Args:
+            sim_time: <Integer>. Current simulation iteration.
+
+        Returns:
+            <Integer>. Number of kcals.
 
         """
 
@@ -50,6 +57,7 @@ class Person(object):
         # Initialize our kcals.
         kcals = None
 
+        # Determine kcals needed by age and gender
         if age <= 1:
             kcals = 820
         elif age <= 3:

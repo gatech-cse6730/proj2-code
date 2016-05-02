@@ -9,11 +9,10 @@ class Visualizer(object):
         Creates a new Visualizer.
 
         Args:
-            log: Boolean. Whether to use the log scale.
+            log: <Boolean>. Flag for using the log scale.
 
         Returns:
             A new Visualizer instance.
-
         """
 
         # Set whether or not to use a log scale.
@@ -43,7 +42,6 @@ class Visualizer(object):
 
         Returns:
             None.
-
         """
 
         # Plot the data.
@@ -63,15 +61,14 @@ class Visualizer(object):
         Adds data for plotting.
 
         Args:
-            x: Integer. A data point for the x-axis on the graph.
-            data: Dictionary. Should be a dictionary of the form:
-                { 'series1': Integer, 'series2': Integer }
-                The provided integer data points will be appended to the
-                existing data arrays for each of the provided series.
+            x: <Integer>. A data point for the x-axis on the graph.
+            data: <Dictionary>. Should be a dictionary of the form:
+                  { 'series1': Integer, 'series2': Integer }
+                  The provided integer data points will be appended to the
+                  existing data arrays for each of the provided series.
 
         Returns:
             None.
-
         """
 
         # Append the given x-axis data point.
@@ -99,7 +96,15 @@ class Visualizer(object):
     # Private methods
 
     def _setup(self):
-        """ Sets up the plot. Initializes each series and adds a legend. """
+        """
+        Sets up the plot. Initializes each series and adds a legend.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
 
         # Initialize the x-axis data points.
         self.x = []
@@ -115,7 +120,15 @@ class Visualizer(object):
             self.axarr[indx].legend(loc='center right', bbox_to_anchor=(1.3, 0.5), fancybox=True)
 
     def _plot(self):
-        """ Re-renders the plot. """
+        """
+        Re-renders the plot.
+
+        Args:
+            None.
+
+        Returns:
+            None.
+        """
 
         # For each series, plot the current data points.
         for indx, (label, data_dict) in enumerate(self.y.iteritems()):
@@ -135,7 +148,15 @@ class Visualizer(object):
             self.axarr[indx].scatter(self.x, data, c=data_dict['color'], label=label)
 
     def _roundup(self, x):
-        """ Rounds x up to a nice number. """
+        """
+        Rounds x up to a nice number
+
+        Args:
+            x: <Float> Input number to round up.
+
+        Returns:
+            <Integer> .
+        """
 
         if x < 100:
             fact = 10
