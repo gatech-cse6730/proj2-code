@@ -215,4 +215,4 @@ class Driver(object):
 
 if __name__ == '__main__':
     driver = Driver(vis=True)
-    driver.drive(max_iterations=1500,random_seed=0,initial_pop=2,food_storage=False)
+    driver.drive(max_iterations=1500,random_seed=0,initial_pop=50,food_storage=False)
