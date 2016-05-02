@@ -55,14 +55,16 @@ class Analyzer(object):
         ax = fig.add_subplot(111)
 
         ax.set_xlabel('Initial population size (N)')
-        ax.set_ylabel('Standard deviation of adult counts')
+        ax.set_ylabel('Variation of adult counts over 10 years')
 
-        a = self.initial_pops
+        a = np.arange(1, len(self.initial_pops)+1, 1)
         b, c = [], []
 
-        for pop, results in self.result_dict.iteritems():
-            b.append(results['mean_stdev'])
-            c.append(results['ci'])
+        for pop in self.initial_pops:
+            result = self.result_dict[pop]
+
+            b.append(result['mean_stdev'])
+            c.append(result['ci'])
 
         ax.errorbar(a,b,yerr=c)
         ax.scatter(a,b,s=40)
