@@ -69,11 +69,12 @@ class Analyzer(object):
         ax.errorbar(a,b,yerr=c)
         ax.scatter(a,b,s=40)
         ax.plot(a,b)
+        plt.xticks(a,self.initial_pops)
 
         plt.show()
         plt.savefig('results/results.png', bbox_inches='tight')
 
 if __name__ == '__main__':
-    analyzer = Analyzer(num_sims=30)
-    analyzer.prepare_results(initial_pops=[50,100,150,250,500,1000,1250])
+    analyzer = Analyzer(num_sims=2)
+    analyzer.prepare_results(initial_pops=[50,100])
     analyzer.prepare_plots()
