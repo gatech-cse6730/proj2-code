@@ -1,51 +1,77 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-import csv
+import math
 
 from batch_driver import BatchDriver
 
 class Analyzer(object):
-    def __init__(self):
+    def __init__(self, num_sims=20):
         """
         Creates a new Analyzer instance.
 
         Args:
+            num_sims: Integer. Num of simulations to perform per batch.
 
         Returns:
             A new Analyzer instance.
 
         """
-        pass
 
-    def prepare_results(self):
-        batch = BatchDriver()
-        results = batch.drive()
+        self.num_sims = num_sims
 
-        print(results['adults'])
+    def prepare_results(self, initial_pops=[50,100]):
+        self.initial_pops = initial_pops
+        self.result_dict = {}
+
+        for pop in self.initial_pops:
+            self.result_dict[pop] = {}
+
+            print('Starting batch for %d.' % pop)
+
+            batch = BatchDriver(self.num_sims)
+            results = batch.drive(initial_pop=pop)
+
+            stdevs = []
+
+            for indx, result in enumerate(results):
+                adults = result['adults']
+                minus_120 = len(adults) - 120
+                last_120 = adults[minus_120:]
+
+                stdev = np.std(last_120)
+                stdevs.append(stdev)
+
+            stdev_of_stdev = np.std(stdevs)
+
+            self.result_dict[pop]['mean_stdev'] = np.mean(stdevs)
+            self.result_dict[pop]['ci'] = (1.96 * stdev_of_stdev) / math.sqrt(self.num_sims)
+
+        print(self.result_dict)
 
     def prepare_plots(self):
         sns.set_style('darkgrid')
         fig = plt.figure()
         ax = fig.add_subplot(111)
 
-        ax.set_xlabel('Parameter Set')
-        ax.set_ylabel('Mean Growth Rate')
+        ax.set_xlabel('Initial population size (N)')
+        ax.set_ylabel('Standard deviation of adult counts')
 
-        c=[1,2,3]
+        a = self.initial_pops
+        b, c = [], []
+
+        for pop, results in self.result_dict.iteritems():
+            b.append(results['mean_stdev'])
+            c.append(results['ci'])
 
         ax.errorbar(a,b,yerr=c)
         ax.scatter(a,b,s=40)
         ax.plot(a,b)
 
-        ax.errorbar(a,d,yerr=c)
-        ax.scatter(a,d,s=40)
-        ax.plot(a,d)
-
-        plt.xticks(np.arange(np.min(a), np.max(a)+1, 1))
-        plt.savefig('results.png', bbox_inches='tight')
+        plt.show()
+        plt.savefig('results/results-111.png', bbox_inches='tight')
 
 if __name__ == '__main__':
-    analyzer = Analyzer()
-    analyzer.prepare_results()
-    #analyzer.prepare_plots()
+    analyzer = Analyzer(num_sims=30)
+    analyzer.prepare_results(initial_pops=[50,100,150,250,500,1000,1250])
+    analyzer.prepare_plots()

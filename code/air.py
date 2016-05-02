@@ -27,11 +27,11 @@ class Air(object):
         Returns the oxygen consumed by the population this timestep.
 
         Args:
-            None
+            None.
 
         Returns:
             Float. Oxygen consumed in a month (kg).
 
         """
-        
+
         return self.population.num_people() * self.OXYGEN_PER_HUMAN_PER_MONTH
