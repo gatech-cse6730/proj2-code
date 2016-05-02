@@ -72,10 +72,12 @@ class Analyzer(object):
         print('b', b)
         print('c', c)
 
-        ax.errorbar(a,b,yerr=c)
+        ax.errorbar(a,b)
         ax.scatter(a,b,s=40)
         ax.plot(a,b)
         plt.xticks(a, self.initial_pops)
+
+        print(a, self.initial_pops)
 
         plt.show()
         plt.savefig('results/results-final.png', bbox_inches='tight')
