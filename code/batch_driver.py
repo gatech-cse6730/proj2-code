@@ -5,7 +5,7 @@ class BatchDriver(object):
     def __init__(self, num_sims=20):
         self.num_sims = num_sims
 
-    def drive(self):
+    def drive(self, initial_pop=50):
         random_seed = 0
 
         results = []
@@ -18,7 +18,7 @@ class BatchDriver(object):
 
             results.append(driver.drive(max_iterations=1500,
                                         random_seed=random_seed,
-                                        initial_pop=50))
+                                        initial_pop=initial_pop))
 
             random_seed += 1
 
