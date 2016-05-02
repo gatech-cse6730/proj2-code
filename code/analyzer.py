@@ -21,6 +21,11 @@ class Analyzer(object):
         self.num_sims = num_sims
 
     def prepare_results(self, initial_pops=[50,100]):
+        """
+        Analyzes data from a batch run, preparing it for plotting.
+
+        """
+
         self.initial_pops = initial_pops
         self.result_dict = {}
 
@@ -50,6 +55,11 @@ class Analyzer(object):
         print(self.result_dict)
 
     def prepare_plots(self):
+        """
+        Generates analysis plots used for the final report (as seen in Fig. 7).
+
+        """
+
         sns.set_style('darkgrid')
         fig = plt.figure()
         ax = fig.add_subplot(111)
