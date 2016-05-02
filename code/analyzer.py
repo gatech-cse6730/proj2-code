@@ -22,6 +22,8 @@ class Analyzer(object):
         batch = BatchDriver()
         results = batch.drive()
 
+        print(results['adults'])
+
     def prepare_plots(self):
         sns.set_style('darkgrid')
         fig = plt.figure()
@@ -30,9 +32,6 @@ class Analyzer(object):
         ax.set_xlabel('Parameter Set')
         ax.set_ylabel('Mean Growth Rate')
 
-        a=np.arange(1,4,1)
-        b=np.arange(14,17,1)
-        d=np.arange(42,45,1)
         c=[1,2,3]
 
         ax.errorbar(a,b,yerr=c)
