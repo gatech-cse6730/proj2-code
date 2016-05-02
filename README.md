@@ -7,6 +7,6 @@ You'll find our paper as `final_report.pdf`. Our Python code can be found in the
 instructions on how to run our code.
 
 If you would like to see a video of our working simulation,
-[here's a video of it on YouTube]().
+[here's a video of it on YouTube](https://youtu.be/SjwoDABv-IU).
 
 Thank you.
