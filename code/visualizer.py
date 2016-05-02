@@ -117,7 +117,7 @@ class Visualizer(object):
 
         # Create the legend.
         for indx, s in enumerate(self.series):
-            self.axarr[indx].legend(loc='center right', bbox_to_anchor=(1.3, 0.5), fancybox=True)
+            self.axarr[indx].legend(loc='upper left', fancybox=True, framealpha=0.5)
 
     def _plot(self):
         """
