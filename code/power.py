@@ -24,14 +24,14 @@ class Power(object):
 
     def power_consumed(self):
         """
-        Returns the oxygen consumed by the population this timestep.
+        Returns the power consumed by the population this timestep.
 
         Args:
-            None
+            None.
 
         Returns:
-            Float. Oxygen consumed in a month (kg).
+            Float. Power consumed in a month (kWh).
 
         """
 
-        return self.population.num_people() * self.PER_CAPITA_CONSUMPTION
+        return self.population.num_people() * self.PER_CAPITA_CONSUMPTION / 12.0
