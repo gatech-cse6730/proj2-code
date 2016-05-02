@@ -11,16 +11,24 @@ class BatchDriver(object):
         results = []
 
         for i in xrange(self.num_sims):
-
-            print("Initializing simulation run %d." % i)
+            print('Initializing simulation run %d for initial pop %d.' % (i, initial_pop))
 
             driver = Driver(vis=False)
 
-            results.append(driver.drive(max_iterations=1500,
-                                        random_seed=random_seed,
-                                        initial_pop=initial_pop))
+            while True:
+                try:
+                    results = driver.drive(max_iterations=1500,
+                                           random_seed=random_seed,
+                                           initial_pop=initial_pop)
+                    results.append(result)
+                    
+                except Exception:
+                    random_seed += 2
+                    continue
 
-            random_seed += 1
+                break
+
+            random_seed += 2
 
         return results
 

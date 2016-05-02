@@ -84,7 +84,6 @@ class Driver(object):
 
         start = time.time()
         total_kcal = population.kcal_requirements(cur_sim_time)
-        #print 'completed total kcal in:', time.time() - start
 
         # Create a facility for population
         # Crop area of 25000 feeds about 30 people
